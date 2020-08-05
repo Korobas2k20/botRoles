@@ -5,17 +5,17 @@ import os
 
 class MyClient(discord.Client):
 	async def on_ready(self):
-		print('Я зашёл на {0}!'.format(self.user))
+		print('Я зашёл на {0}!'.format(self.user)) # Заходит на сервер
 
 	async def on_raw_reaction_add(self, payload):
 		if payload.message_id == config.POST_ID:
-			channel = self.get_channel(payload.channel_id) # получаем объект канала
-			message = await channel.fetch_message(payload.message_id) # получаем объект сообщения
-			member = utils.get(message.guild.members, id=payload.user_id) # получаем объект пользователя который поставил реакцию
+			channel = self.get_channel(payload.channel_id) # Получаю объект канала
+			message = await channel.fetch_message(payload.message_id) # Получаю объект сообщения
+			member = utils.get(message.guild.members, id=payload.user_id) # Получаю объект пользователя, который поставил реакцию
 
 			try:
-				emoji = str(payload.emoji) # эмоджик который выбрал юзер
-				role = utils.get(message.guild.roles, id=config.ROLES[emoji]) # объект выбранной роли
+				emoji = str(payload.emoji) # Эмоджи, который выбрал человек
+				role = utils.get(message.guild.roles, id=config.ROLES[emoji]) # Объект выбранной роли
 			
 				if(len([i for i in member.roles if i.id not in config.EXCROLES]) <= config.MAX_ROLES_PER_USER):
 					await member.add_roles(role)
@@ -30,16 +30,16 @@ class MyClient(discord.Client):
 				print(repr(e))
 
 	async def on_raw_reaction_remove(self, payload):
-		channel = self.get_channel(payload.channel_id) # получаем объект канала
-		message = await channel.fetch_message(payload.message_id) # получаем объект сообщения
-		member = utils.get(message.guild.members, id=payload.user_id) # получаем объект пользователя который поставил реакцию
+		channel = self.get_channel(payload.channel_id) # Получаю объект канала
+		message = await channel.fetch_message(payload.message_id) # Получаю объект сообщения
+		member = utils.get(message.guild.members, id=payload.user_id) # Получаю объект пользователя который поставил реакцию
 
 		try:
-			emoji = str(payload.emoji) # эмоджик который выбрал юзер
-			role = utils.get(message.guild.roles, id=config.ROLES[emoji]) # объект выбранной роли (если есть)
+			emoji = str(payload.emoji) # Эмиоджи который выбрал юзер
+			role = utils.get(message.guild.roles, id=config.ROLES[emoji]) # Объект выбранной роли (если есть)
 
 			await member.remove_roles(role)
-			print('[ВЫПОЛНЕНО] Роль {1.name} была убрана для человека {0.display_name}'.format(member, role))
+			print('[ВЫПОЛНЕНО] Роль {1.name} была убрана для {0.display_name}'.format(member, role))
 
 		except KeyError as e:
 			print('[ОШИБКА] Роли такой нет ' + emoji)
